@@ -4,7 +4,7 @@
   "private": true,
   "description": "支持 EPUB 和 TXT 的离线悬浮阅读器，面向 Windows 与 UOS ARM64",
   "author": "QuietLeaf Contributors",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "type": "module",
   "main": "dist/electron/main.cjs",
   "engines": {

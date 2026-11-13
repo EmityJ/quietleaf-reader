@@ -4,6 +4,7 @@ version = "0.1.4"
 edition = "2021"
 rust-version = "1.88"
 description = "隐页阅读 Rust 桌面版"
+license = "MIT"
 publish = false
 
 [features]
