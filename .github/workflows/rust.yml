@@ -1,0 +1,51 @@
+name: Rust 桌面版构建
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            command: pack:rust:win
+            artifact: windows-x64
+          - os: ubuntu-22.04
+            command: pack:rust:linux:x64
+            artifact: linux-x64
+          - os: ubuntu-22.04-arm
+            command: pack:rust:linux:arm64
+            artifact: linux-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends build-essential pkg-config libwebkit2gtk-4.1-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev libxdo-dev patchelf binutils
+      - run: npm ci
+      - run: npm run test:pack:rust
+      - run: npm run ${{ matrix.command }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quietleaf-rust-${{ matrix.artifact }}
+          path: |
+            release/rust/**/*.zip
+            release/rust/**/*.deb
+            release/rust/**/*.tar.gz
+            release/rust/**/*.sha256
+            release/rust/**/*-build.json
+          if-no-files-found: error

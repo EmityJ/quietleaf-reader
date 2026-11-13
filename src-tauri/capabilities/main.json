@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "main",
+  "description": "主界面只访问受限阅读器命令与状态事件",
+  "windows": ["main"],
+  "permissions": [
+    "allow-reader-command",
+    "allow-read-epub",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten"
+  ]
+}

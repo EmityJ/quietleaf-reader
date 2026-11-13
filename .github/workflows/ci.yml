@@ -1,0 +1,52 @@
+name: 构建与检查
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            command: pack:win
+            artifact: windows-x64
+          - os: ubuntu-22.04
+            command: pack:linux:x64
+            artifact: linux-x64
+          - os: ubuntu-22.04-arm
+            command: pack:linux:arm64
+            artifact: linux-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx install-electron
+      - run: npm run format:check
+      - run: npm test
+      - run: npm run ${{ matrix.command }}
+      - if: runner.os == 'Windows'
+        run: npx playwright test
+      - if: matrix.artifact == 'linux-x64'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends xvfb xauth openbox xcompmgr x11-utils
+          bash scripts/test-linux-x11.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quietleaf-${{ matrix.artifact }}
+          path: |
+            release/**/*.zip
+            release/**/*.deb
+            release/**/*.tar.gz
+          if-no-files-found: error

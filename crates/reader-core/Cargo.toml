@@ -1,0 +1,20 @@
+[package]
+name = "quietleaf-core"
+version = "0.1.4"
+edition = "2021"
+rust-version = "1.88"
+description = "隐页阅读器的本地书架与电子书解析核心"
+publish = false
+
+[dependencies]
+anyhow = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
+encoding_rs = "0.8"
+regex = "1"
+roxmltree = "0.20"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+sha2 = "0.10"
+tempfile = "3"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+

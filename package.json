@@ -1,0 +1,93 @@
+{
+  "name": "quietleaf-reader",
+  "version": "0.1.4",
+  "private": true,
+  "description": "支持 EPUB 和 TXT 的离线悬浮阅读器，面向 Windows 与 UOS ARM64",
+  "author": "QuietLeaf Contributors",
+  "license": "UNLICENSED",
+  "type": "module",
+  "main": "dist/electron/main.cjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "typecheck": "vue-tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "build": "npm run typecheck && vite build && node scripts/build-electron.mjs",
+    "start": "electron .",
+    "test": "tsx --test tests/*.test.ts",
+    "test:e2e": "npm run build && playwright test",
+    "pack:win": "npm run build && electron-builder --win zip --x64 --publish never --config.electronDist=node_modules/electron/dist",
+    "pack:linux:x64": "npm run build && electron-builder --linux --x64 --dir --publish never && node scripts/package-linux.mjs x64",
+    "pack:linux:arm64": "npm run build && electron-builder --linux --arm64 --dir --publish never && node scripts/package-linux.mjs arm64",
+    "dev:ui": "vite",
+    "build:ui": "npm run typecheck && vite build",
+    "tauri": "tauri",
+    "dev:rust": "tauri dev",
+    "build:rust": "tauri build --no-bundle",
+    "pack:rust:linux:x64": "tauri build --target x86_64-unknown-linux-gnu --bundles deb && node scripts/package-rust.mjs x86_64-unknown-linux-gnu",
+    "pack:rust:linux:arm64": "tauri build --target aarch64-unknown-linux-gnu --bundles deb && node scripts/package-rust.mjs aarch64-unknown-linux-gnu",
+    "dev:rust:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/rust.ps1 tauri dev",
+    "build:rust:local": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/rust.ps1 tauri build --no-bundle",
+    "pack:rust:win": "npm run build:rust && node scripts/package-rust.mjs",
+    "pack:rust:win:local": "npm run build:rust:local && node scripts/package-rust.mjs",
+    "test:pack:rust": "node --test tests/windows-runtime.test.mjs"
+  },
+  "dependencies": {
+    "@tauri-apps/api": "2.12.4",
+    "epubjs": "0.3.93",
+    "fast-xml-parser": "^5.3.6",
+    "jszip": "3.10.1",
+    "vue": "3.5.44"
+  },
+  "overrides": {
+    "@xmldom/xmldom": "0.8.15"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "@tauri-apps/cli": "2.12.4",
+    "@types/node": "^22.19.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "electron": "44.9.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "^0.28.2",
+    "prettier": "3.9.10",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vite": "8.3.4",
+    "vue-tsc": "^3.2.4"
+  },
+  "build": {
+    "appId": "local.quietleaf.reader",
+    "productName": "隐页",
+    "executableName": "quietleaf",
+    "directories": {
+      "output": "release/${version}",
+      "buildResources": "resources"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "artifactName": "quietleaf-${version}-${os}-${arch}.${ext}",
+    "win": {
+      "icon": "resources/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "linux": {
+      "icon": "resources/icon.png",
+      "category": "Office",
+      "maintainer": "QuietLeaf Contributors",
+      "synopsis": "EPUB 与 TXT 离线阅读器",
+      "desktop": {
+        "entry": {
+          "Name": "隐页阅读",
+          "Comment": "阅读 EPUB 与 TXT，支持透明悬浮模式"
+        }
+      }
+    }
+  }
+}

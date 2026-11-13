@@ -1,0 +1,36 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "隐页阅读 Rust",
+  "version": "0.1.4",
+  "identifier": "local.quietleaf.reader.rust",
+  "build": {
+    "beforeDevCommand": "npm run dev:ui",
+    "beforeBuildCommand": "npm run build:ui",
+    "devUrl": "http://127.0.0.1:5173",
+    "frontendDist": "../dist/renderer"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "capabilities": ["main"],
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; frame-src 'self' blob:; connect-src 'self' ipc: http://ipc.localhost; object-src 'none'; base-uri 'self' blob:",
+      "devCsp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data: blob:; frame-src 'self' blob:; connect-src 'self' ipc: http://ipc.localhost ws://127.0.0.1:5173; object-src 'none'; base-uri 'self' blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb"],
+    "category": "Office",
+    "shortDescription": "支持 TXT、EPUB 与透明悬浮的离线阅读器",
+    "icon": ["../resources/icon.png", "../resources/icon.ico"],
+    "linux": {
+      "deb": {
+        "depends": ["libwebkit2gtk-4.1-0", "libgtk-3-0", "libayatana-appindicator3-1"],
+        "section": "text"
+      }
+    },
+    "windows": {
+      "webviewInstallMode": { "type": "downloadBootstrapper", "silent": true }
+    }
+  }
+}
